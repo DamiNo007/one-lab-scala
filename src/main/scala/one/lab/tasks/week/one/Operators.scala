@@ -1,5 +1,7 @@
 package one.lab.tasks.week.one
 
+import one.lab.tasks.week.one.Interfaces.{ForzaHorizon, PlayStation, RDR2, Sega, Sonic, Xbox}
+
 object Operators {
 
   /**
@@ -9,7 +11,9 @@ object Operators {
     * @param surname just surname.
     * @param age just age.
     */
-  class Person(name: String, surname: String, age: Int) {}
+  class Person(val name: String, val surname: String, val age: Int) {
+    override def toString(): String = getPersonInfo(name, surname, age)
+  }
 
   /**
     * Should return formatted string.
@@ -18,7 +22,7 @@ object Operators {
     * @param age just age.
     * @return should return string in the following format: "name surname age".
     */
-  def getPersonInfo(name: String, surname: String, age: Int): String = ???
+  def getPersonInfo(name: String, surname: String, age: Int): String = s"$name $surname $age"
 
   /**
     * should return Person info as in [[getPersonInfo]] method.
@@ -26,7 +30,7 @@ object Operators {
     * @return return should be the same as in [[getPersonInfo]].
     * @hint: try to override [[Person.toString]] method.
     */
-  def getPersonInfoObject(person: Person): String = ???
+  def getPersonInfoObject(person: Person): String = person.toString()
 
   /**
     * Just compare to Persons by their age and return elder one.
@@ -34,5 +38,14 @@ object Operators {
     * @param second person.
     * @return eldest person.
     */
-  def getElderPerson(first: Person, second: Person): Person = ???
+  def getElderPerson(first: Person, second: Person): Person = if (first.age > second.age) first else second
+
+  //My own Test :)
+  def main(args: Array[String]): Unit = {
+    val person1 = new Person("Damir", "Moldabayev", 20)
+    val person2 = new Person("Ruslan", "Safarov", 19)
+    println(person1.toString())
+    println(person2.toString())
+    println(getElderPerson(person1, person2))
+  }
 }
