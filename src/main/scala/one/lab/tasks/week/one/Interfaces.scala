@@ -63,7 +63,7 @@ object Interfaces {
     override val game: String = "ForzaHorizon race game"
   }
 
-  class RDR2 extends PlayStationGameDisk {
+  class Rdr2 extends PlayStationGameDisk {
     override val game: String = "RDR2"
   }
 
@@ -77,7 +77,7 @@ object Interfaces {
     val xbox = new Xbox()
     val sega = new Sega()
 
-    val rdr2 = new RDR2()
+    val rdr2 = new Rdr2()
     val forzaHorizon = new ForzaHorizon()
     val sonic = new Sonic()
     //Checking PlayStationGameDisk object on PlayStation
