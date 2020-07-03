@@ -1,14 +1,15 @@
 package one.lab.tasks.week.two
 
+import java.awt.PageAttributes.OriginType
 import java.nio.file.{Files, Paths, StandardOpenOption}
 
 import scala.io.Source
 import scala.io.StdIn.readLine
 import scala.jdk.CollectionConverters._
-import scala.util.chaining._
+import scala.annotation.tailrec
 
 /**
-  * Можете реализовать свою логиprintln("Checking List(1,2,3,4,5)")ку.
+  * Можете реализовать свою логику.
   * Главное чтобы работали команды и выводились ошибки при ошибочных действиях.
   * ll - показать все что есть в тек. папке
   * dir - показать только директории в тек. папке
@@ -66,10 +67,6 @@ object FileManager extends App {
 
   case class ChangePathError(val error: String)
 
-  case class Path(var path: String)
-
-  val currPath = Path("/home/damir/IdeaProjects/one-lab-scala1")
-
   def getFilesDirs(path: String): List[String] = {
     Files
       .list(Paths.get(path))
@@ -105,14 +102,12 @@ object FileManager extends App {
   def changePath(current: String, path: String): Either[ChangePathError, String] = {
     if (path.equals("..")) {
       val currSplit = current.split("/")
-      val newPath = current.substring(0, (current.length() - currSplit(currSplit.length - 1).length - 1))
-      currPath.path = newPath
+      val newPath = currSplit.init.mkString("/")
       Right(s"$newPath")
     }
     else {
       val dirs = getDirectories(current)
       if (dirs.contains(s"$current/$path")) {
-        currPath.path = s"$current/$path"
         Right(s"$current/$path")
       }
       else {
@@ -246,24 +241,55 @@ object FileManager extends App {
     case ListFilesCommand() => getFiles(currentPath).mkString("\n")
     case ListDirectoryCommand() => getDirectories(currentPath).mkString("\n")
     case ListAllContentCommand() => getFilesDirs(currentPath).mkString("\n")
-    case MakeFile(name) => mkFile(name, currentPath).getOrElse(mkFile(name, currentPath).left.get.error)
-    case MakeDir(name) => mkDir(name, currentPath).getOrElse(mkDir(name, currentPath).left.get.error)
-    case DelFile(name) => removeFile(name, currentPath).getOrElse(removeFile(name, currentPath).left.get.error)
-    case DelDir(name) => removeDir(name, currentPath).getOrElse(removeDir(name, currentPath).left.get.error)
-    case GetFileContent(name) => getFileContent(name, currentPath).getOrElse(getFileContent(name, currentPath).left.get.error)
-    case WriteToFile(name, text) => writeToFile(name, currentPath, text).getOrElse(writeToFile(name, currentPath, text).left.get.error)
-    case ChangeDirectoryCommand(destination) => changePath(currentPath, destination).getOrElse(changePath(currentPath, destination).left.get.error)
+    case MakeFile(name) => mkFile(name, currentPath) match {
+      case Left(result) => result.error
+      case Right(result) => result
+    }
+    case MakeDir(name) => mkDir(name, currentPath) match {
+      case Left(result) => result.error
+      case Right(result) => result
+    }
+    case DelFile(name) => removeFile(name, currentPath) match {
+      case Left(result) => result.error
+      case Right(result) => result
+    }
+    case DelDir(name) => removeDir(name, currentPath) match {
+      case Left(result) => result.error
+      case Right(result) => result
+    }
+    case GetFileContent(name) => getFileContent(name, currentPath) match {
+      case Left(result) => result.error
+      case Right(result) => result
+    }
+    case WriteToFile(name, text) => writeToFile(name, currentPath, text) match {
+      case Left(result) => result.error
+      case Right(result) => result
+    }
+    case ChangeDirectoryCommand(destination) => changePath(currentPath, destination) match {
+      case Left(result) => result.error
+      case Right(result) => result
+    }
     case PrintErrorCommand(error) => error
   }
 
   def main(basePath: String): Unit = {
     println(s"You are in directory -> $basePath")
-    while (true) {
-      val curr = currPath.path
-      val command = readLine()
-      println(handleCommand(parseCommand(command), curr))
+
+    @tailrec
+    def rec(path: String): Unit = {
+      val input = readLine()
+      val command = parseCommand(input)
+      val res = handleCommand(command, path)
+      println(res)
+      if (command.isInstanceOf[ChangeDirectoryCommand] && !res.equals("path does not exist!")) {
+        rec(res)
+      }
+      else
+        rec(path)
     }
+
+    rec(basePath)
   }
 
-  main(currPath.path)
+  main("/home/damir/IdeaProjects/one-lab-scala1")
 }
