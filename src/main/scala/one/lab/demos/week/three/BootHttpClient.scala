@@ -9,8 +9,6 @@ import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.model.Uri
 import akka.stream.ActorMaterializer
 import akka.util.ByteString
-import io.github.arturka.chat.library.LinkAttachment
-import io.github.arturka.chat.library.Message
 import org.json4s.native.JsonMethods.parse
 import org.json4s.DefaultFormats
 import requests.Response
