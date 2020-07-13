@@ -49,9 +49,9 @@ object Collections {
   def splitAtK[A](k: Int, list: List[A]): (List[A], List[A]) = {
     @tailrec
     def split(n: Int, list: List[A], remainder: List[A]): (List[A], List[A]) = (n, list) match {
-      case (_, Nil) => (remainder.reverse, Nil)
-      case (0, l) => (remainder.reverse, l)
-      case (k, head :: tail) => split(k - 1, tail, head :: remainder)
+      case (_, Nil) => (remainder, Nil)
+      case (0, l) => (remainder, l)
+      case (num, head :: tail) => split(num - 1, tail, remainder :+ head)
     }
 
     split(k, list, Nil)
@@ -68,7 +68,7 @@ object Collections {
     @tailrec
     def remove(list: List[A], beforeK: List[A], i: Int, k: Int): (List[A], A) = list match {
       case Nil => throw new IndexOutOfBoundsException
-      case x :: tail => if (i == k) ((beforeK.reverse ::: tail), x) else remove(tail, (x :: beforeK), i + 1, k)
+      case x :: tail => if (i == k) ((beforeK ::: tail), x) else remove(tail, (beforeK :+ x), i + 1, k)
     }
 
     remove(list, List(), 0, k)
